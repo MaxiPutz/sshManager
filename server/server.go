@@ -4,21 +4,26 @@ import (
 	"log"
 	"net/http"
 
-	api "maxiputz.github/sshManager/server/API"
+	"github.com/rs/cors"
+	"maxiputz.github/sshManager/server/api"
 	"maxiputz.github/sshManager/server/secure"
 )
 
 func InitServer() {
+	mx := http.NewServeMux()
 
 	fs := http.FileServer(http.Dir("./server/public"))
-	http.Handle("/", fs)
+	mx.Handle("/", fs)
 
-	http.HandleFunc("/ssh/create", secure.BasicAuth(api.CreateSSHHandler))
-	http.HandleFunc("/ssh/get", secure.BasicAuth(api.GetSSHHandler))
-	http.HandleFunc("/ssh/getIp", secure.BasicAuth(api.GetSSHHandlerByIP))
-	http.HandleFunc("/ssh/update/{id}", secure.BasicAuth(api.UpdateSSHHandler))
-	http.HandleFunc("/ssh/delete/{id}", secure.BasicAuth(api.DeleteSSHHandler))
+	mx.HandleFunc("/ssh/create", secure.BasicAuth(api.CreateSSHHandler))
+	mx.HandleFunc("/ssh/get", secure.BasicAuth(api.GetSSHHandler))
+	mx.HandleFunc("/ssh/getIp", secure.BasicAuth(api.GetSSHHandlerByIP))
+	mx.HandleFunc("/ssh/update/{id}", secure.BasicAuth(api.UpdateSSHHandler))
+	mx.HandleFunc("/ssh/delete/{id}", secure.BasicAuth(api.DeleteSSHHandler))
+	mx.HandleFunc("/user/create", api.UserCreate)
 
 	log.Println("Server started on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+
+	handler := cors.AllowAll().Handler(mx)
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }

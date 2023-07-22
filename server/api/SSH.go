@@ -12,7 +12,7 @@ import (
 )
 
 func CreateSSHHandler(w http.ResponseWriter, r *http.Request) {
-	// Parse the request body into an SSH struct
+	// Parse the request body into an SSH struct(w http.ResponseWriter, r *http.Request)
 	var ssh entity.SSH
 	err := json.NewDecoder(r.Body).Decode(&ssh)
 	if err != nil {
