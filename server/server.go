@@ -13,7 +13,7 @@ import (
 func InitServer() {
 	mx := http.NewServeMux()
 
-	fs := http.FileServer(http.Dir("./server/public"))
+	fs := http.FileServer(http.Dir("./server/public/build"))
 	mx.Handle("/", fs)
 
 	mx.HandleFunc("/ssh/create", secure.BasicAuth(crud.CreateSSHHandler))
