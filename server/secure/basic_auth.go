@@ -1,11 +1,12 @@
 package secure
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
+	"maxiputz.github/sshManager/db/db_singelton"
 	"maxiputz.github/sshManager/db/entity"
-	"maxiputz.github/sshManager/fn"
 )
 
 func BasicAuth(next http.HandlerFunc) http.HandlerFunc {
@@ -31,21 +32,41 @@ func BasicAuth(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		// Check if the provided credentials are valid
-		if !isValidUser(username, password) {
+		b, user := isValidUser(entity.User{
+			Name:     username,
+			Password: password,
+		})
+		if !b {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 
-		next(w, r)
+		ctx := context.WithValue(r.Context(), "user", user)
+
+		next(w, r.WithContext(ctx))
 	}
 }
 
-func isValidUser(username string, password string) bool {
-	users := fn.Filter[entity.User](loadUsers(), func(b entity.User) bool {
-		fmt.Println(b.Password)
-		fmt.Println(b.Name)
-		return b.Password == password && b.Name == username
-	})
+func isValidUser(user entity.User) (bool, entity.User) {
+	db, err := db_singelton.GetDB()
+	if err != nil {
+		return false, entity.User{}
+	}
 
-	return len(users) > 0
+	var resUser entity.User
+	res := db.Where("name = ? ", user.Name).First(&resUser)
+
+	if res.Error != nil {
+		fmt.Println("no user found")
+		return false, entity.User{}
+	}
+
+	b := CompareHashStrWithStr(resUser.Password, user.Password)
+
+	if b == false {
+		fmt.Println("hash doesnt fit")
+		return false, entity.User{}
+	}
+
+	return true, resUser
 }

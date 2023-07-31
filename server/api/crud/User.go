@@ -1,4 +1,4 @@
-package api
+package crud
 
 import (
 	"encoding/json"
@@ -43,13 +43,6 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.Password = hash
-
-	hash, err = secure.HashString(user.Name)
-	if err != nil {
-		http.Error(w, "Hashing failed", http.StatusBadRequest)
-		return
-	}
-	user.Name = hash
 
 	db.Create(&user)
 

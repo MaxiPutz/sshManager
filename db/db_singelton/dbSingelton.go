@@ -31,7 +31,8 @@ func GetDB() (*gorm.DB, error) {
 
 		db.AutoMigrate(&entity.User{})
 		db.AutoMigrate(&entity.SSH{})
-
+		db.AutoMigrate(&entity.User_SSH{})
+		db.AutoMigrate(&entity.ActionFlow{})
 	})
 
 	return db, err
