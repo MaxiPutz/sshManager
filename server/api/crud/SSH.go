@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 
@@ -230,41 +231,56 @@ func UpdateSSHHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteSSHHandler(w http.ResponseWriter, r *http.Request) {
-	// Extract the ID from the URL path
-	idStr := r.URL.Query().Get("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		http.Error(w, "Invalid ID", http.StatusBadRequest)
+	type resID struct {
+		ID string `json:"ID"`
+	}
+
+	fmt.Println("in the get all request")
+	user, ok := r.Context().Value("user").(entity.User)
+	if !ok {
+		fmt.Printf("ok: %v\n", ok)
+		http.Error(w, "not able to get user", http.StatusBadRequest)
 		return
 	}
 
-	// Get the database connection (db is assumed to be a global variable for the database connection)
+	idStruct := resID{}
+	b, err := io.ReadAll(r.Body)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+		http.Error(w, "not able to read respose", http.StatusBadRequest)
+		return
+	}
+	err = json.Unmarshal(b, &idStruct)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+		http.Error(w, "not able to read respose", http.StatusBadRequest)
+		return
+	}
+	fmt.Printf("id: %v\n", idStruct)
 	db, err := db_singelton.GetDB()
 	if err != nil {
-		http.Error(w, "Failed to get database connection", http.StatusInternalServerError)
+		http.Error(w, "not able to connect to db", http.StatusBadRequest)
 		return
 	}
 
-	// Check if the SSH record with the given ID exists
-	var ssh entity.SSH
-	result := db.First(&ssh, id)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			http.Error(w, "SSH record not found", http.StatusNotFound)
-		} else {
-			http.Error(w, "Failed to retrieve SSH record", http.StatusInternalServerError)
-		}
+	ssh := entity.SSH{}
+
+	id, err := strconv.Atoi(idStruct.ID)
+	if err != nil {
+		http.Error(w, "not able to id from string", http.StatusBadRequest)
 		return
 	}
 
-	// Delete the SSH record from the database
-	result = db.Delete(&ssh, id)
-	if result.Error != nil {
-		http.Error(w, "Failed to delete SSH record", http.StatusInternalServerError)
-		return
+	fmt.Printf("id: %v\n", id)
+	fmt.Printf("user: %v\n", user)
+
+	user_ssh := entity.User_SSH{
+		User_id: user.ID,
+		SSH_id:  uint(id),
 	}
 
-	// Return a success message in the response
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("SSH record deleted successfully"))
+	db.Delete(&user_ssh, "User_id = ? and SSH_id = ?", user_ssh.User_id, user_ssh.SSH_id)
+	db.Delete(&ssh, id)
+
+	json.NewEncoder(w).Encode(user_ssh)
 }

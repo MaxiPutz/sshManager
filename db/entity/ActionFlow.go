@@ -9,7 +9,7 @@ import (
 
 type ActionFlow struct {
 	gorm.Model
-	ActionFlow_uuid string
+	UUID            string
 	ActionName      string
 	User_Id         uint
 	Index           int

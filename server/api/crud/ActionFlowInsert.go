@@ -106,7 +106,7 @@ func CreateActionFlowHandler(w http.ResponseWriter, r *http.Request) {
 			Action:          v.Action,
 			Source_Dir:      "",
 			Destination_Dir: "",
-			ActionFlow_uuid: id,
+			UUID:            id,
 			Index:           v.Index,
 			ActionName:      ActionName,
 		})
@@ -120,7 +120,7 @@ func CreateActionFlowHandler(w http.ResponseWriter, r *http.Request) {
 			Action:          v.Action,
 			Source_Dir:      v.Source_Dir,
 			Destination_Dir: v.Destination_Dir,
-			ActionFlow_uuid: id,
+			UUID:            id,
 			Index:           v.Index,
 			ActionName:      ActionName,
 		})

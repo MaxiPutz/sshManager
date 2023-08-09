@@ -21,7 +21,7 @@ func InitServer() {
 	mx.HandleFunc("/ssh/get", secure.BasicAuth(crud.GetSSHHandler))
 	mx.HandleFunc("/ssh/getIp", secure.BasicAuth(crud.GetSSHHandlerByIP))
 	mx.HandleFunc("/ssh/update/{id}", secure.BasicAuth(crud.UpdateSSHHandler))
-	mx.HandleFunc("/ssh/delete/{id}", secure.BasicAuth(crud.DeleteSSHHandler))
+	mx.HandleFunc("/ssh/delete", secure.BasicAuth(crud.DeleteSSHHandler))
 
 	mx.HandleFunc("/ssh/exe", secure.BasicAuth((sshremote.Execute)))
 
@@ -30,8 +30,10 @@ func InitServer() {
 
 	mx.HandleFunc("/ssh/actionFlow/create", secure.BasicAuth((crud.CreateActionFlowHandler)))
 	mx.HandleFunc("/ssh/actionFlow/getAll", secure.BasicAuth((crud.ActionFlowGetAll)))
+	mx.HandleFunc("/ssh/actionFlow/delete", secure.BasicAuth(crud.ActionFlowDelete))
 
 	mx.HandleFunc("/user/create", crud.UserCreate)
+	mx.HandleFunc("/user/delete", secure.BasicAuth(crud.UserDelete))
 
 	mx.HandleFunc("/login", secure.BasicAuthLogin)
 
