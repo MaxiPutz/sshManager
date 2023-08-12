@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/rs/cors"
+	apishell "maxiputz.github/sshManager/server/api/apiShell"
 	"maxiputz.github/sshManager/server/api/crud"
 	sshremote "maxiputz.github/sshManager/server/api/ssh_remote"
 	"maxiputz.github/sshManager/server/secure"
@@ -31,6 +32,9 @@ func InitServer() {
 	mx.HandleFunc("/ssh/actionFlow/create", secure.BasicAuth((crud.CreateActionFlowHandler)))
 	mx.HandleFunc("/ssh/actionFlow/getAll", secure.BasicAuth((crud.ActionFlowGetAll)))
 	mx.HandleFunc("/ssh/actionFlow/delete", secure.BasicAuth(crud.ActionFlowDelete))
+
+	mx.HandleFunc("/sshShell/newConnection", apishell.HandleNewSSHShellConnection)
+	mx.HandleFunc("/sshShell/socket", apishell.StreamConn)
 
 	mx.HandleFunc("/user/create", crud.UserCreate)
 	mx.HandleFunc("/user/delete", secure.BasicAuth(crud.UserDelete))

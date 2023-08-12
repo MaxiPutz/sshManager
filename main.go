@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"maxiputz.github/sshManager/db/db_singelton"
-	"maxiputz.github/sshManager/db/entity"
 	"maxiputz.github/sshManager/server"
 	"maxiputz.github/sshManager/ssh"
 	testdata "maxiputz.github/sshManager/testData"
@@ -18,11 +17,7 @@ func main() {
 		panic(err)
 	}
 	defer db.Commit()
-	var user entity.User
 
-	db.First(&user, 1)
-
-	fmt.Println(user.Name)
 	//TestSSH()
 	server.InitServer()
 }
