@@ -110,6 +110,7 @@ func (s *sshShellController) OnMessageSocket(killChan chan bool) {
 }
 
 func (s *sshShellController) SetPipe(session *ssh.Session, sessionID string, sc sessionCHannel) {
+	defer session.Close()
 
 	stdout, err := session.StdoutPipe()
 	if err != nil {
@@ -141,6 +142,7 @@ func (s *sshShellController) SetPipe(session *ssh.Session, sessionID string, sc 
 	}()
 
 	go func() {
+		io.Copy(stdin, bytes.NewReader([]byte("cat .bash_history\n")))
 		io.Copy(stdin, bytes.NewReader([]byte("pwd\n")))
 		for {
 			fmt.Println("waiting for input")
