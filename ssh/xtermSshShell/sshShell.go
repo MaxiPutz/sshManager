@@ -1,12 +1,12 @@
-package sshshell
+package xtermsshshell
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"os"
-	"strings"
 	"sync"
 	"time"
 
@@ -51,21 +51,10 @@ func (s *sshShellController) WriteToSHHConnection(msg string, uuid string) {
 
 	fmt.Printf("\"write to sshconnection \": %v\n", "write to sshconnection ")
 	for k := range s.sessionInputCannelMap {
-		fmt.Printf("k: %v\n", k)
+		fmt.Printf("sessionInputCannelMap %v\n", k)
 	}
 
 	sc.WriteInput(msg)
-}
-
-func (s *sshShellController) WriteToSHHConnection2(msg []byte, uuid string) {
-	sc := s.sessionInputCannelMap[uuid]
-
-	fmt.Printf("\"write to sshconnection \": %v\n", "write to sshconnection ")
-	for k := range s.sessionInputCannelMap {
-		fmt.Printf("k: %v\n", k)
-	}
-
-	sc.WriteInput2(msg)
 }
 
 func (s *sshShellController) NewSession(info entity.SSH) (*ssh.Session, error) {
@@ -102,13 +91,16 @@ func (s *sshShellController) OnMessageSocket(killChan chan bool) {
 
 			if len(msg) == 0 {
 				killChan <- true
-				fmt.Printf("\"killchan\": %v\n", "killchan")
 				break
 			}
 
-			csv := strings.Split(string(msg), ",")
-			uuid := csv[0]
-			command := csv[1] + "\n"
+			// csv := strings.Split(string(msg), ",")
+
+			var sw writeStruct
+			json.Unmarshal(msg, &sw)
+
+			uuid := sw.Id
+			command := sw.Msg
 			fmt.Printf("uuid: %v\n", uuid)
 			fmt.Printf("command: %v\n", command)
 
@@ -164,14 +156,11 @@ func (s *sshShellController) SetPipe(session *ssh.Session, sessionID string, sc 
 	}()
 
 	go func() {
-		io.Copy(stdin, bytes.NewReader([]byte("cat .bash_history\n")))
-		io.Copy(stdin, bytes.NewReader([]byte("pwd\n")))
 		for {
 			fmt.Println("waiting for input")
 			msg := <-sc.GetChannelInput()
 			fmt.Printf("channel input msg: %v\n", msg)
 			io.Copy(stdin, bytes.NewReader([]byte(msg)))
-			// io.Copy(stdin, bytes.NewReader([]byte("pwd\n")))
 		}
 	}()
 

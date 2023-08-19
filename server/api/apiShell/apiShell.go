@@ -8,7 +8,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"maxiputz.github/sshManager/db/entity"
-	sshshell "maxiputz.github/sshManager/ssh/sshShell"
+	sshshell "maxiputz.github/sshManager/ssh/xtermSshShell"
 )
 
 func HandleNewSSHShellConnection(w http.ResponseWriter, r *http.Request) {
