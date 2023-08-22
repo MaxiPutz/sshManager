@@ -137,7 +137,7 @@ func (s *sshShellController) SetPipe(session *ssh.Session, sessionID string, sc 
 
 	term := "xterm-256color"
 
-	session.RequestPty(term, 30, 40, modes)
+	session.RequestPty(term, 65, 300, modes)
 
 	if err := session.Shell(); err != nil {
 		log.Fatalf("Failed to start shell: %s", err)
