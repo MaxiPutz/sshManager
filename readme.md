@@ -11,7 +11,7 @@ The SSH Connection Management Program is a web application that allows users to 
 
 
 
-### User Registration and Authentication![register_fast](https://github.com/MaxiPutz/sshManager/assets/48091139/150a1432-cce8-4270-8a53-2b16a2631a67)
+### User Registration and Authentication
 
 
 
