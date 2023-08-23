@@ -1,4 +1,4 @@
-![batch](https://github.com/MaxiPutz/sshManager/assets/48091139/4a354506-4513-4301-a216-18fadfe5a924)# SSH Connection Management Program
+# SSH Connection Management Program
 
 ## Introduction
 
