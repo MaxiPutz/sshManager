@@ -39,6 +39,12 @@ The SSH Connection Management Program is a web application that allows users to 
 - Users can manage multiple SSH connections.
 - New SSH connections can be added by clicking on the "Add" tab.
 
+## Technology Stack
+
+- Backend: Go
+- Frontend: React with TypeScript
+- Database: Postgres
+
 ## Usage
 
 To use the SSH Connection Management Program:
@@ -53,4 +59,3 @@ To use the SSH Connection Management Program:
 
 The SSH Connection Management Program simplifies SSH connection management by offering a user-friendly web interface and various features for efficient interaction with remote servers.
 
-For more information or to get started, visit our website at [your-website-url-here](https://www.example.com).
