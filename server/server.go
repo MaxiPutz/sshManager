@@ -41,8 +41,8 @@ func InitServer() {
 
 	mx.HandleFunc("/login", secure.BasicAuthLogin)
 
-	log.Println("Server started on :8080")
+	log.Println("Server started on :8081")
 
 	handler := cors.AllowAll().Handler(mx)
-	log.Fatal(http.ListenAndServe(":8080", handler))
+	log.Fatal(http.ListenAndServe(":8081", handler))
 }
